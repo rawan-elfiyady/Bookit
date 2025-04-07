@@ -30,6 +30,7 @@ public class BorrowedBook
     public DateTime? BorrowDate { get; set; }
     public DateTime? ReturnDate { get; set; }
     public bool IsConfirmed { get; set; } = false;
+    public bool IsRequestedToBeReturned { get; set; } = false;
     public bool IsReturned { get; set; } = false;
 
 

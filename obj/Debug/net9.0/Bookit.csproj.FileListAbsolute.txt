@@ -210,3 +210,4 @@ D:\Desktop 3\Rawan\Bookit\bin\Debug\net9.0\Microsoft.Extensions.Primitives.dll
 D:\Desktop 3\Rawan\Bookit\bin\Debug\net9.0\BouncyCastle.Cryptography.dll
 D:\Desktop 3\Rawan\Bookit\bin\Debug\net9.0\MailKit.dll
 D:\Desktop 3\Rawan\Bookit\bin\Debug\net9.0\MimeKit.dll
+D:\Desktop 3\Rawan\Bookit\obj\Debug\net9.0\Bookit.sourcelink.json
