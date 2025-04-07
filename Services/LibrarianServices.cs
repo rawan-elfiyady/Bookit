@@ -7,10 +7,12 @@ namespace Bookit.Services;
 public class LibrarianServices
 {
     private readonly UserRepository _userRepository;
+    private readonly BookRepository _bookRepository;
 
-    public LibrarianServices(UserRepository userRepository)
+    public LibrarianServices(UserRepository userRepository, BookRepository bookRepository)
     {
         _userRepository = userRepository;
+        _bookRepository = bookRepository;
     }
 
     // GET USERS
@@ -56,6 +58,181 @@ public class LibrarianServices
         _userRepository.UpdateUser(existingLibrarian);
         return new UpdateDataResponse { Success = true, Message = "Profile Updated Successfully" };
 
+    }
+
+    // Books Services 
+
+    // Create Book
+    public async Task<CUBookResponse> CreateBook(CreateBookDto request)
+    {
+        var existingBook = await _bookRepository.GetBookByName(request.Name);
+
+        if (existingBook != null)
+        {
+            return new CUBookResponse { Success = false, Message = "Book Already Exist" };
+        }
+
+        var book = new Book
+        {
+            Name = request.Name,
+            Author = request.Author,
+            Quantity = request.Quantity,
+            AvailabilityStatus = true,
+            Description = request.Description,
+            Image = request.Image,
+            Category = request.Image
+        };
+
+        _bookRepository.SaveBook(book);
+
+        return new CUBookResponse { Success = false, Message = "Book Already Exist" };
+    }
+
+    // Update Book
+    public async Task<CUBookResponse> UpdateBook(int bookId, UpdateBookDto request)
+    {
+        var existingbook = await _bookRepository.GetBookById(bookId);
+
+        if (existingbook == null)
+        {
+            return new CUBookResponse { Success = false, Message = "Book Doesn`t Exist" };
+        }
+        if (!string.IsNullOrEmpty(request.Name))
+        {
+            existingbook.Name = request.Name;
+        }
+        if (!string.IsNullOrEmpty(request.Author))
+        {
+            existingbook.Author = request.Author;
+        }
+
+        existingbook.Quantity = request.Quantity;
+
+        if (!string.IsNullOrEmpty(request.Description))
+        {
+            existingbook.Description = request.Description;
+        }
+        existingbook.AvailabilityStatus = request.AvailabilityStatus;
+
+        if (!string.IsNullOrEmpty(request.Image))
+        {
+            existingbook.Image = request.Image;
+        }
+        if (!string.IsNullOrEmpty(request.Category))
+        {
+            existingbook.Category = request.Category;
+        }
+
+
+        _bookRepository.UpdateBook(existingbook);
+        return new CUBookResponse { Success = true, Message = "Book Updated Successfully" };
+    }
+
+    // Get Book By Id
+    public async Task<Book?> GetBookByID(int bookId)
+    {
+        return await _bookRepository.GetBookById(bookId);
+
+    }
+
+    // Get Book By Name
+    public async Task<Book?> GetBookByName(string bookName)
+    {
+        return await _bookRepository.GetBookByName(bookName);
+
+    }
+
+    // Get Books By Author
+    public async Task<List<Book>> GetBooksByAuthor(string authorName)
+    {
+        return await _bookRepository.GetBooksByAuthor(authorName);
+    }
+
+    // Get Books By Category
+    public async Task<List<Book>> GetBooksByCategory(string categoryName)
+    {
+        return await _bookRepository.GetBooksByCategory(categoryName);
+    }
+
+    // Get Available Books 
+    public async Task<List<Book>> GetAvailableBooks()
+    {
+        return await _bookRepository.GetAvailableBooks();
+    }
+
+    // Get All Books
+    public async Task<List<Book>> GetAllBooks()
+    {
+        return await _bookRepository.GetAllBooks();
+    }
+
+    // Get Borrowed Books 
+    public async Task<List<BorrowedBook>> GetBorrowedBooks()
+    {
+        return await _bookRepository.GetBorrowedBooks();
+    }
+
+    // Get Returned Books 
+    public async Task<List<BorrowedBook>> GetReturnedBooks()
+    {
+        return await _bookRepository.GetReturnedBooks();
+    }
+
+    // Delete Book
+    public async Task<bool> RemoveBook(int bookId)
+    {
+        var existingBook = await _bookRepository.GetBookById(bookId);
+
+        if (existingBook != null)
+        {
+            return await _bookRepository.deleteBook(bookId);
+        }
+
+        return false;
+    }
+
+    // Reject Borrow Request
+    public async Task<bool> RejectBorrowRequest(int bookId)
+    {
+        var book = await _bookRepository.GetBorrowedBook(bookId);
+
+        if (book != null)
+        {
+            return await _bookRepository.DeleteBorrowedBook(bookId);
+        }
+        return false;
+    }
+
+    // APPROVE Borrow REQUEST
+    public async Task<bool> ApproveBorrowBook(int bookId)
+    {
+        var book = await _bookRepository.GetBookById(bookId);
+
+        if (book != null)
+        {
+            return await _bookRepository.ApproveBorrowRequest(bookId);
+        }
+
+        return false;
+    }
+
+    // List Borrow Requests
+    public async Task<List<BorrowedBook>> PendingBorrowRequests()
+    {
+        return await _bookRepository.GetPendingBorrowRequests();
+    }
+
+    // APPROVE Return REQUEST
+    public async Task<bool> ApproveReturnBook(int bookId)
+    {
+        var book = await _bookRepository.GetBookById(bookId);
+
+        if (book != null)
+        {
+            return await _bookRepository.ApproveReturnRequest(bookId);
+        }
+
+        return false;
     }
 
 }

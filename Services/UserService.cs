@@ -7,10 +7,12 @@ namespace Bookit.Service;
 public class UserService
 {
     private readonly UserRepository _userRepository;
+    private readonly BookRepository _bookRepository;
 
-    public UserService(UserRepository userRepository)
+    public UserService(UserRepository userRepository, BookRepository bookRepository)
     {
         _userRepository = userRepository;
+        _bookRepository = bookRepository;
     }
 
     // VIEW PROFILE
@@ -49,5 +51,50 @@ public class UserService
         _userRepository.UpdateUser(existingUser);
         return new UpdateDataResponse { Success = true, Message = "Profile Updated Successfully" };
 
+    }
+
+    // Book Services
+    // Get Book By Id
+    public async Task<Book?> GetBookByID(int bookId)
+    {
+        return await _bookRepository.GetBookById(bookId);
+
+    }
+
+    // Get Book By Name
+    public async Task<Book?> GetBookByName(string bookName)
+    {
+        return await _bookRepository.GetBookByName(bookName);
+
+    }
+
+    // Get Books By Author
+    public async Task<List<Book>> GetBooksByAuthor(string authorName)
+    {
+        return await _bookRepository.GetBooksByAuthor(authorName);
+    }
+
+    // Get Books By Category
+    public async Task<List<Book>> GetBooksByCategory(string categoryName)
+    {
+        return await _bookRepository.GetBooksByCategory(categoryName);
+    }
+
+    // Get Available Books 
+    public async Task<List<Book>> GetAvailableBooks()
+    {
+        return await _bookRepository.GetAvailableBooks();
+    }
+
+    // Get All Books
+    public async Task<List<Book>> GetAllBooks()
+    {
+        return await _bookRepository.GetAllBooks();
+    }
+
+    // Get Borrowed Books
+    public async Task<List<BorrowedBook>> GetBorrowedBooks(int userId)
+    {
+        return await _bookRepository.GetUserBorrowedBooks(userId);
     }
 }
