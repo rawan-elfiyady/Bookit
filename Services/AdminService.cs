@@ -39,7 +39,7 @@ public class AdminService
             IsApproved = true,
         };
 
-        _userRepository.SaveUser(librarian);
+        await _userRepository.SaveUser(librarian);
 
         return true;
     }
@@ -89,7 +89,7 @@ public class AdminService
         {
             existingLibrarian.IsApproved = request.IsApproved;
         }
-        _userRepository.UpdateUser(existingLibrarian);
+        await _userRepository.UpdateUser(existingLibrarian);
         return new UpdateDataResponse { Success = true, Message = "Librarian Updated Successfully" };
 
     }
@@ -127,7 +127,7 @@ public class AdminService
             existingAdmin.Password = hashedPassword;
         }
 
-        _userRepository.UpdateUser(existingAdmin);
+        await _userRepository.UpdateUser(existingAdmin);
         return new UpdateDataResponse { Success = true, Message = "Profile Updated Successfully" };
 
     }
@@ -212,7 +212,7 @@ public class AdminService
             Category = request.Image
         };
 
-        _bookRepository.SaveBook(book);
+        await _bookRepository.SaveBook(book);
 
         return new CUBookResponse { Success = false, Message = "Book Already Exist" };
     }
@@ -253,7 +253,7 @@ public class AdminService
         }
 
 
-        _bookRepository.UpdateBook(existingbook);
+        await _bookRepository.UpdateBook(existingbook);
         return new CUBookResponse { Success = true, Message = "Book Updated Successfully" };
     }
 

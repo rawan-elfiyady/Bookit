@@ -36,7 +36,7 @@ public class AuthService
             IsApproved = request.Role.Equals("Librarian") ? false : true
         };
 
-        _userRepository.SaveUser(user);
+        await _userRepository.SaveUser(user);
 
         if (user.Role.Equals("Librarian"))
         {

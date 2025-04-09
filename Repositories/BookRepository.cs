@@ -72,21 +72,29 @@ public class BookRepository
 
     }
 
-    
-
-    
-
     // Create Book
-    public async void SaveBook(Book book)
+    public async Task SaveBook(Book book)
     {
-        _context.Books.Add(book);
-        await _context.SaveChangesAsync();
+        // Convert dates to UTC before saving
+        book.ConvertDatesToUtc();
+            try
+        {
+            _context.Books.Add(book);
+            await _context.SaveChangesAsync();
+        }
+        catch (Exception ex)
+        {
+            // Log the error to track if there's an issue
+            Console.WriteLine($"Error occurred while saving book: {ex.Message}");
+        }
     }
 
     // Update Book
-    public async void UpdateBook(Book book)
+    public async Task UpdateBook(Book book)
     {
+        // Convert dates to UTC before saving
+        book.ConvertDatesToUtc();
         _context.Books.Update(book);
-        await _context.SaveChangesAsync();
+        await  _context.SaveChangesAsync();
     }
 }

@@ -50,7 +50,7 @@ public class UserService
             existingUser.Password = hashedPassword;
         }
 
-        _userRepository.UpdateUser(existingUser);
+        await _userRepository.UpdateUser(existingUser);
         return new UpdateDataResponse { Success = true, Message = "Profile Updated Successfully" };
 
     }
@@ -129,7 +129,7 @@ public class UserService
             BorrowedDate = DateTime.Now
         };
 
-        _borrowedBookRepository.SaveBook(requestedBook);
+        await _borrowedBookRepository.SaveBook(requestedBook);
 
         return new RequestResponse { Success = true, Message = "Book Is Requested Successfully" };
     }
@@ -141,7 +141,7 @@ public class UserService
         if (book != null)
         {
             book.IsRequestedToBeReturned = true;
-            _borrowedBookRepository.UpdateBook(book);
+            await _borrowedBookRepository.UpdateBook(book);
 
             return new RequestResponse { Success = true, Message = "Return Book Request Sent Successfully" };
         }

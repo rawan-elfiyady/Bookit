@@ -48,9 +48,9 @@ builder.Services.AddCors(options =>
         policy =>
         {
             policy.WithOrigins("http://localhost:3000") // Change this to your frontend URL
-                  .AllowAnyMethod()
-                  .AllowAnyHeader()
-                  .AllowCredentials(); // Important for JWT authentication
+                .AllowAnyMethod()
+                .AllowAnyHeader()
+                .AllowCredentials(); // Important for JWT authentication
         });
 });
 

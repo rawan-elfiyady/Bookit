@@ -204,7 +204,7 @@ namespace Bookit.Controllers
         // GET ENDPOINTS
 
         // 1- Get Book By Name
-        [HttpGet("book/{name}")]
+        [HttpGet("book-by-name/{name}")]
         public async Task<IActionResult> FilterBookByName(string name)
         {
             var book = await _adminService.GetBookByName(name);
@@ -217,7 +217,7 @@ namespace Bookit.Controllers
         }
 
         // 2- Get Book By Author
-        [HttpGet("book/{author}")]
+        [HttpGet("book-by-author/{author}")]
         public async Task<IActionResult> FilterBookByAuthor(string author)
         {
             var book = await _adminService.GetBooksByAuthor(author);

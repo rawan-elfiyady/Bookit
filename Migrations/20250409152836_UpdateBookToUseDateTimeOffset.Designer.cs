@@ -3,6 +3,7 @@ using System;
 using Bookit.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Bookit.Migrations
 {
     [DbContext(typeof(LibraryDbContext))]
-    partial class LibraryDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250409152836_UpdateBookToUseDateTimeOffset")]
+    partial class UpdateBookToUseDateTimeOffset
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -41,7 +44,7 @@ namespace Bookit.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<DateTime>("CreatedAt")
+                    b.Property<DateTimeOffset>("CreatedAt")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("timestamp with time zone");
 
@@ -61,7 +64,7 @@ namespace Bookit.Migrations
                     b.Property<int>("Quantity")
                         .HasColumnType("integer");
 
-                    b.Property<DateTime?>("UpdatedAt")
+                    b.Property<DateTimeOffset>("UpdatedAt")
                         .ValueGeneratedOnAddOrUpdate()
                         .HasColumnType("timestamp with time zone");
 
@@ -88,13 +91,13 @@ namespace Bookit.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<DateTime>("BorrowDate")
+                    b.Property<DateTimeOffset?>("BorrowDate")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<DateTime>("BorrowedDate")
+                    b.Property<DateTimeOffset>("BorrowedDate")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<DateTime>("DueDate")
+                    b.Property<DateTimeOffset?>("DueDate")
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<bool>("IsConfirmed")
@@ -106,7 +109,7 @@ namespace Bookit.Migrations
                     b.Property<bool>("IsReturned")
                         .HasColumnType("boolean");
 
-                    b.Property<DateTime>("ReturnDate")
+                    b.Property<DateTimeOffset?>("ReturnDate")
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<int>("UserId")

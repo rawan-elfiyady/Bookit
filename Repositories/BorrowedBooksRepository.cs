@@ -15,8 +15,9 @@ public class BorrowedBooksRepository
     }
 
     // Create Book
-    public async void SaveBook(BorrowedBook book)
+    public async Task SaveBook(BorrowedBook book)
     {
+        book.ConvertDatesToUtc();
         _context.BorrowedBooks.Add(book);
         await _context.SaveChangesAsync();
     }
@@ -30,7 +31,7 @@ public class BorrowedBooksRepository
     public async Task<BorrowedBook?> GetBookByUserId(int bookId, int userId)
     {
         return await _context.BorrowedBooks
-                            .Where(b => b.BookId == bookId 
+                            .Where(b => b.BookId == bookId
                             && b.UserId == userId).FirstOrDefaultAsync();
     }
 
@@ -73,8 +74,9 @@ public class BorrowedBooksRepository
                     .ToListAsync();
     }
     // Update Book
-    public async void UpdateBook(BorrowedBook book)
+    public async Task UpdateBook(BorrowedBook book)
     {
+        book.ConvertDatesToUtc();
         _context.BorrowedBooks.Update(book);
         await _context.SaveChangesAsync();
     }
@@ -82,7 +84,7 @@ public class BorrowedBooksRepository
     public async Task<bool> DeleteBorrowedBook(int bookId, int userId)
     {
         var book = await _context.BorrowedBooks
-                            .Where(b => b.BookId == bookId 
+                            .Where(b => b.BookId == bookId
                             && b.UserId == userId).FirstOrDefaultAsync();
 
         if (book != null)
@@ -100,7 +102,7 @@ public class BorrowedBooksRepository
     public async Task<bool> ApproveBorrowRequest(int bookId, int userId)
     {
         var book = await _context.BorrowedBooks
-                            .Where(b => b.BookId == bookId 
+                            .Where(b => b.BookId == bookId
                             && b.UserId == userId).FirstOrDefaultAsync();
 
         if (book != null)
@@ -108,6 +110,8 @@ public class BorrowedBooksRepository
             book.IsConfirmed = true;
             book.BorrowDate = DateTime.Now;
             book.DueDate = DateTime.Now.AddDays(14);
+            book.BorrowDate = book.BorrowDate.ToUniversalTime();
+            book.DueDate = book.DueDate.ToUniversalTime();
             await _context.SaveChangesAsync();
             return true;
         }
@@ -118,12 +122,15 @@ public class BorrowedBooksRepository
     public async Task<bool> ApproveReturnRequest(int bookId, int userId)
     {
         var book = await _context.BorrowedBooks
-                            .Where(b => b.BookId == bookId 
+                            .Where(b => b.BookId == bookId
                             && b.UserId == userId).FirstOrDefaultAsync();
 
         if (book != null)
         {
             book.IsReturned = true;
+            book.ReturnDate = DateTime.Now;
+            book.ReturnDate = book.ReturnDate.ToUniversalTime();
+
             await _context.SaveChangesAsync();
             return true;
         }

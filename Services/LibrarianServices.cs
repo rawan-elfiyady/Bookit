@@ -63,7 +63,7 @@ public class LibrarianServices
             existingLibrarian.Password = hashedPassword;
         }
 
-        _userRepository.UpdateUser(existingLibrarian);
+        await _userRepository.UpdateUser(existingLibrarian);
         return new UpdateDataResponse { Success = true, Message = "Profile Updated Successfully" };
 
     }
@@ -90,12 +90,12 @@ public class LibrarianServices
             AvailabilityStatus = true,
             Description = request.Description,
             Image = request.Image,
-            Category = request.Image
+            Category = request.Category
         };
 
-        _bookRepository.SaveBook(book);
+        await _bookRepository.SaveBook(book);
 
-        return new CUBookResponse { Success = false, Message = "Book Already Exist" };
+        return new CUBookResponse { Success = false, Message = "Book Created Successfully" };
     }
 
     // Update Book
@@ -134,7 +134,7 @@ public class LibrarianServices
         }
 
 
-        _bookRepository.UpdateBook(existingbook);
+        await _bookRepository.UpdateBook(existingbook);
         return new CUBookResponse { Success = true, Message = "Book Updated Successfully" };
     }
 
@@ -238,7 +238,11 @@ public class LibrarianServices
         {
             var borrowedBook = await _bookRepository.GetBookById(bookId);
             borrowedBook.Quantity--;
-            _bookRepository.UpdateBook(borrowedBook);
+            if (borrowedBook.Quantity == 0)
+            {
+                borrowedBook.AvailabilityStatus = false;
+            }
+            await _bookRepository.UpdateBook(borrowedBook);
             
             return await _borrowedBookRepository.ApproveBorrowRequest(bookId, userId);
         }
@@ -254,11 +258,15 @@ public class LibrarianServices
         if (book != null)
         {
             var returnedBook = await _bookRepository.GetBookById(bookId);
+            if (returnedBook.Quantity == 0)
+            {
+                returnedBook.AvailabilityStatus = true;
+            }
             returnedBook.Quantity++;
-            _bookRepository.UpdateBook(returnedBook);
+            await _bookRepository.UpdateBook(returnedBook);
 
             book.ReturnDate = DateTime.Now;
-            _borrowedBookRepository.UpdateBook(book);
+            await _borrowedBookRepository.UpdateBook(book);
 
             return await _borrowedBookRepository.ApproveReturnRequest(bookId, userId);
         }

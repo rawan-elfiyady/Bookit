@@ -31,13 +31,13 @@ public class UserRepository
 
 
 
-    public async void SaveUser(User user)
+    public async Task SaveUser(User user)
     {
         _context.Users.Add(user);
         await _context.SaveChangesAsync();
     }
 
-    public async void UpdateUser(User user)
+    public async Task UpdateUser(User user)
     {
         _context.Users.Update(user);
         await _context.SaveChangesAsync();

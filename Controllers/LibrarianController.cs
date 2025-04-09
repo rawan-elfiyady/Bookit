@@ -82,7 +82,7 @@ namespace Bookit.Controllers
 
         // GET ENDPOINTS
         // 1- Get Book By Name
-        [HttpGet("book/{name}")]
+        [HttpGet("book-by-name/{name}")]
         public async Task<IActionResult> FilterBookByName(string name)
         {
             var book = await _librarianServices.GetBookByName(name);
@@ -95,7 +95,7 @@ namespace Bookit.Controllers
         }
 
         // 2- Get Book By Author
-        [HttpGet("book/{author}")]
+        [HttpGet("book-by-author/{author}")]
         public async Task<IActionResult> FilterBookByAuthor(string author)
         {
             var book = await _librarianServices.GetBooksByAuthor(author);
@@ -282,7 +282,7 @@ namespace Bookit.Controllers
         // DELETE ENDPOINTS
 
         // 14- Reject Borrow Request
-        [HttpDelete("reject-borrow-request")]
+        [HttpDelete("reject-borrow-request/{bookId}/{userId}")]
         public async Task<IActionResult> RejectBorrowRequest(int bookId, int userId, [FromBody] string reason)
         {
             var user = await _librarianServices.GetUser(userId);
@@ -302,6 +302,7 @@ namespace Bookit.Controllers
 
             return Ok(new { message = "Request rejected successfully" });
         }
+
         // 15- Remove Book
         [HttpDelete("remove-book/{id}")]
         public async Task<IActionResult> RemoveBook(int id)

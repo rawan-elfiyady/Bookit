@@ -27,13 +27,21 @@ public class BorrowedBook
     [Required]
     public DateTime BorrowedDate { get; set; } = DateTime.Now;
 
-    public DateTime? BorrowDate { get; set; }
-    public DateTime? ReturnDate { get; set; }
+    public DateTime BorrowDate { get; set; }
+    public DateTime ReturnDate { get; set; }
 
-    public DateTime? DueDate { get; set; }
+    public DateTime DueDate { get; set; }
     public bool IsConfirmed { get; set; } = false;
     public bool IsRequestedToBeReturned { get; set; } = false;
     public bool IsReturned { get; set; } = false;
 
+    // Method to convert dates to UTC before saving
+    public void ConvertDatesToUtc()
+    {
+        BorrowedDate = BorrowedDate.ToUniversalTime();
+        BorrowDate = BorrowDate.ToUniversalTime();
+        ReturnDate = ReturnDate.ToUniversalTime();
+        DueDate = DueDate.ToUniversalTime();
+    }
 
 }
