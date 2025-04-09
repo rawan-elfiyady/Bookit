@@ -29,7 +29,7 @@ public class Book
 
     [Required]
     [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-    public DateTime CreatedAt { get; set; }
+    public DateTime CreatedAt { get; set; } = DateTime.Now;
 
     [Required]
     [DatabaseGenerated(DatabaseGeneratedOption.Computed)]

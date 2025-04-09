@@ -59,17 +59,113 @@ namespace Bookit.Controllers
         // BOOK MANAGEMENT
 
         // GET ENDPOINTS
+        // 1- Get Book By Name
+        [HttpGet("book/{name}")]
+        public async Task<IActionResult> FilterBookByName(string name)
+        {
+            var book = await _userServices.GetBookByName(name);
+
+            if (book == null)
+            {
+                return BadRequest(new { message = "Book Doesn`t Exist" });
+            }
+            return Ok(book);
+        }
+
+        // 2- Get Book By Author
+        [HttpGet("book/{author}")]
+        public async Task<IActionResult> FilterBookByAuthor(string author)
+        {
+            var book = await _userServices.GetBooksByAuthor(author);
+
+            if (book == null)
+            {
+                return BadRequest(new { message = "Author Doesn`t Exist" });
+            }
+            return Ok(book);
+        }
+        // 3- Get Book By Category
+        [HttpGet("books/{category}")]
+        public async Task<IActionResult> FilterBookByCategory(string category)
+        {
+            var books = await _userServices.GetBooksByCategory(category);
+
+            if (books == null)
+            {
+                return BadRequest(new { message = "category Doesn`t Exist" });
+            }
+            return Ok(books);
+        }
+        // 4- Get Available Books
+        [HttpGet("available-books")]
+        public async Task<IActionResult> GetAvailableBooks()
+        {
+            var books = await _userServices.GetAvailableBooks();
+
+            if (books == null)
+            {
+                return BadRequest(new { message = "There Is No Available Books" });
+            }
+            return Ok(books);
+        }
+        // 5- Get All Books
+        [HttpGet("all-books")]
+        public async Task<IActionResult> GetAllBooks()
+        {
+            var books = await _userServices.GetAllBooks();
+
+            if (books == null)
+            {
+                return BadRequest(new { message = "There Is No Books" });
+            }
+            return Ok(books);
+        }
+
+        // 6- Get Borrowed Books
+        [HttpGet("borrowed-books/{id}")]
+        public async Task<IActionResult> GetBorrowedBooks(int id)
+        {
+            var books = await _userServices.GetBorrowedBooks(id);
+
+            if (books == null)
+            {
+                return BadRequest(new { message = "There Is No Borrowed Books" });
+            }
+            return Ok(books);
+        }
+
 
         //-------------------------------------------------------------------------------------------------------------------------------
 
         // POST ENDPOINTS
 
-        //---------------------------------------------------------------------------------------------------------------------------------
+        // 7- Request A Book To Borrow
+        [HttpPost("request-book/{bookId}/{userId}")]
+        public async Task<IActionResult> RequestBook(int bookId, int userId)
+        {
+            var result = await _userServices.RequestBook(bookId, userId);
 
-        // PUT ENDPOINTS
+            if (!result.Success)
+            {
+                return BadRequest(new { message = result.Message });
+            }
 
-        //---------------------------------------------------------------------------------------------------------------------------------
+            return Ok(new { message = result.Message });
+        }
 
-        // DELETE ENDPOINTS
+        // 7- Send a Return Request
+        [HttpPost("request-return-book/{bookId}/{userId}")]
+        public async Task<IActionResult> RequestReturn(int bookId, int userId)
+        {
+            var result = await _userServices.RequestReturn(bookId, userId);
+
+            if (!result.Success)
+            {
+                return BadRequest(new { message = result.Message });
+            }
+
+            return Ok(new { message = result.Message });
+        }
+
     }
 }

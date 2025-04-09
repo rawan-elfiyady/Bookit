@@ -42,18 +42,6 @@ public class BookRepository
                     .ToListAsync();
 
     }
-
-    // Get All Borrowed Books
-    public async Task<List<BorrowedBook>> GetBorrowedBooks()
-    {
-        return await _context.BorrowedBooks.ToListAsync();
-    }
-
-    // Get Borrowed Book
-    public async Task<BorrowedBook?> GetBorrowedBook(int bookId)
-    {
-        return await _context.BorrowedBooks.FindAsync(bookId);
-    }
     // Get All Books
     public async Task<List<Book>> GetAllBooks()
     {
@@ -67,30 +55,7 @@ public class BookRepository
                     .Where(b => b.AvailabilityStatus == true)
                     .ToListAsync();
     }
-    // Get Returned Books
-    public async Task<List<BorrowedBook>> GetReturnedBooks()
-    {
-        return await _context.BorrowedBooks
-                    .Where(b => b.IsReturned == true)
-                    .ToListAsync();
-    }
-
-    // Get User Borrowed Books
-    public async Task<List<BorrowedBook>> GetUserBorrowedBooks(int userId)
-    {
-        return await _context.BorrowedBooks
-                    .Where(b => b.UserId == userId)
-                    .ToListAsync();
-    }
-
-    // Get Pending Borrow Requests
-    public async Task<List<BorrowedBook>> GetPendingBorrowRequests()
-    {
-        return await _context.BorrowedBooks
-                    .Where(b => b.IsConfirmed == false)
-                    .ToListAsync();
-    }
-
+    
     // Delete Book
     public async Task<bool> deleteBook(int bookId)
     {
@@ -107,51 +72,9 @@ public class BookRepository
 
     }
 
-    // Delete Borrowed Book
-    public async Task<bool> DeleteBorrowedBook(int bookId)
-    {
-        var book = _context.BorrowedBooks.Find(bookId);
+    
 
-        if (book != null)
-        {
-            _context.BorrowedBooks.Remove(book);
-            await _context.SaveChangesAsync();
-            return true;
-        }
-
-        return false;
-
-    }
-
-    // Approve Borrow Request
-    public async Task<bool> ApproveBorrowRequest(int bookId)
-    {
-        var book = await _context.BorrowedBooks.FindAsync(bookId);
-
-        if (book != null)
-        {
-            book.IsConfirmed = true;
-            await _context.SaveChangesAsync();
-            return true;
-        }
-
-        return false;
-    }
-
-    // Approve Return Request
-    public async Task<bool> ApproveReturnRequest(int bookId)
-    {
-        var book = await _context.BorrowedBooks.FindAsync(bookId);
-
-        if (book != null)
-        {
-            book.IsReturned = true;
-            await _context.SaveChangesAsync();
-            return true;
-        }
-
-        return false;
-    }
+    
 
     // Create Book
     public async void SaveBook(Book book)

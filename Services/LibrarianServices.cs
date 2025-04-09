@@ -8,17 +8,25 @@ public class LibrarianServices
 {
     private readonly UserRepository _userRepository;
     private readonly BookRepository _bookRepository;
+    private readonly BorrowedBooksRepository _borrowedBookRepository;
 
-    public LibrarianServices(UserRepository userRepository, BookRepository bookRepository)
+    public LibrarianServices(UserRepository userRepository, BookRepository bookRepository, BorrowedBooksRepository borrowedBookRepository)
     {
         _userRepository = userRepository;
         _bookRepository = bookRepository;
+        _borrowedBookRepository = borrowedBookRepository;
     }
 
     // GET USERS
     public async Task<List<User>> GetUsers()
     {
         return await _userRepository.GetUsers();
+    }
+
+    // Get User
+    public async Task<User?> GetUser(int userId)
+    {
+        return await _userRepository.GetUserById(userId);
     }
 
 
@@ -59,6 +67,8 @@ public class LibrarianServices
         return new UpdateDataResponse { Success = true, Message = "Profile Updated Successfully" };
 
     }
+
+    //-------------------------------------------------------------------------------------------------------------------------------------------
 
     // Books Services 
 
@@ -166,16 +176,20 @@ public class LibrarianServices
         return await _bookRepository.GetAllBooks();
     }
 
+    //-------------------------------------------------------------------------------------------------------------------------------------------
+
+    // Borrowed Books Services
+
     // Get Borrowed Books 
     public async Task<List<BorrowedBook>> GetBorrowedBooks()
     {
-        return await _bookRepository.GetBorrowedBooks();
+        return await _borrowedBookRepository.GetBorrowedBooks();
     }
 
     // Get Returned Books 
     public async Task<List<BorrowedBook>> GetReturnedBooks()
     {
-        return await _bookRepository.GetReturnedBooks();
+        return await _borrowedBookRepository.GetReturnedBooks();
     }
 
     // Delete Book
@@ -192,44 +206,61 @@ public class LibrarianServices
     }
 
     // Reject Borrow Request
-    public async Task<bool> RejectBorrowRequest(int bookId)
+    public async Task<bool> RejectBorrowRequest(int bookId, int userId)
     {
-        var book = await _bookRepository.GetBorrowedBook(bookId);
+        var book = await _borrowedBookRepository.GetBookByUserId(bookId, userId);
 
         if (book != null)
         {
-            return await _bookRepository.DeleteBorrowedBook(bookId);
+            return await _borrowedBookRepository.DeleteBorrowedBook(bookId, userId);
         }
-        return false;
-    }
-
-    // APPROVE Borrow REQUEST
-    public async Task<bool> ApproveBorrowBook(int bookId)
-    {
-        var book = await _bookRepository.GetBookById(bookId);
-
-        if (book != null)
-        {
-            return await _bookRepository.ApproveBorrowRequest(bookId);
-        }
-
         return false;
     }
 
     // List Borrow Requests
     public async Task<List<BorrowedBook>> PendingBorrowRequests()
     {
-        return await _bookRepository.GetPendingBorrowRequests();
+        return await _borrowedBookRepository.GetPendingBorrowRequests();
     }
 
-    // APPROVE Return REQUEST
-    public async Task<bool> ApproveReturnBook(int bookId)
+    // List Return Requests
+    public async Task<List<BorrowedBook>> PendingReturnRequests()
     {
-        var book = await _bookRepository.GetBookById(bookId);
+        return await _borrowedBookRepository.GetPendingReturnRequests();
+    }
+
+    // APPROVE Borrow REQUEST
+    public async Task<bool> ApproveBorrowBook(int bookId, int userId)
+    {
+        var book = await _borrowedBookRepository.GetBookByUserId(bookId, userId);
 
         if (book != null)
         {
-            return await _bookRepository.ApproveReturnRequest(bookId);
+            var borrowedBook = await _bookRepository.GetBookById(bookId);
+            borrowedBook.Quantity--;
+            _bookRepository.UpdateBook(borrowedBook);
+            
+            return await _borrowedBookRepository.ApproveBorrowRequest(bookId, userId);
+        }
+
+        return false;
+    }
+
+    // APPROVE Return REQUEST
+    public async Task<bool> ApproveReturnBook(int bookId, int userId)
+    {
+        var book = await _borrowedBookRepository.GetBookByUserId(bookId, userId);
+
+        if (book != null)
+        {
+            var returnedBook = await _bookRepository.GetBookById(bookId);
+            returnedBook.Quantity++;
+            _bookRepository.UpdateBook(returnedBook);
+
+            book.ReturnDate = DateTime.Now;
+            _borrowedBookRepository.UpdateBook(book);
+
+            return await _borrowedBookRepository.ApproveReturnRequest(bookId, userId);
         }
 
         return false;

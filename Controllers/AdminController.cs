@@ -161,7 +161,6 @@ namespace Bookit.Controllers
 
         // 9-  Reject Librarian Request
         [HttpDelete("reject-librarian/{id}")]
-        [HttpPost("reject-librarian/{librarianId}")]
         public async Task<IActionResult> RejectLibrarian(int librarianId, [FromBody] string reason)
         {
             var librarian = await _adminService.GetLibrarian(librarianId);
@@ -204,18 +203,122 @@ namespace Bookit.Controllers
 
         // GET ENDPOINTS
 
-        
+        // 1- Get Book By Name
+        [HttpGet("book/{name}")]
+        public async Task<IActionResult> FilterBookByName(string name)
+        {
+            var book = await _adminService.GetBookByName(name);
+
+            if (book == null)
+            {
+                return BadRequest(new { message = "Book Doesn`t Exist" });
+            }
+            return Ok(book);
+        }
+
+        // 2- Get Book By Author
+        [HttpGet("book/{author}")]
+        public async Task<IActionResult> FilterBookByAuthor(string author)
+        {
+            var book = await _adminService.GetBooksByAuthor(author);
+
+            if (book == null)
+            {
+                return BadRequest(new { message = "Author Doesn`t Exist" });
+            }
+            return Ok(book);
+        }
+        // 3- Get Book By Category
+        [HttpGet("books/{category}")]
+        public async Task<IActionResult> FilterBookByCategory(string category)
+        {
+            var books = await _adminService.GetBooksByCategory(category);
+
+            if (books == null)
+            {
+                return BadRequest(new { message = "category Doesn`t Exist" });
+            }
+            return Ok(books);
+        }
+        // 4- Get Available Books
+        [HttpGet("available-books")]
+        public async Task<IActionResult> GetAvailableBooks()
+        {
+            var books = await _adminService.GetAvailableBooks();
+
+            if (books == null)
+            {
+                return BadRequest(new { message = "There Is No Available Books" });
+            }
+            return Ok(books);
+        }
+        // 5- Get All Books
+        [HttpGet("all-books")]
+        public async Task<IActionResult> GetAllBooks()
+        {
+            var books = await _adminService.GetAllBooks();
+
+            if (books == null)
+            {
+                return BadRequest(new { message = "There Is No Books" });
+            }
+            return Ok(books);
+        }
 
         //-------------------------------------------------------------------------------------------------------------------------------
 
         // POST ENDPOINTS
 
+        // 6- Create Book
+        [HttpPost("add-book")]
+        public async Task<IActionResult> AddBook([FromBody] CreateBookDto request)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(new { message = "Validation failed.", errors = ModelState });
+            }
+            var success = await _adminService.CreateBook(request);
+
+            if (!success.Success)
+            {
+                return BadRequest(new { message = success.Message });
+            }
+
+            return Ok(new { message = success.Message });
+        }
+
         //---------------------------------------------------------------------------------------------------------------------------------
 
         // PUT ENDPOINTS
 
+        // 7- Update Book
+        [HttpPut("update-book/{id}")]
+        public async Task<IActionResult> UpdateBook(int id, UpdateBookDto request)
+        {
+            var result = await _adminService.UpdateBook(id, request);
+
+            if (!result.Success)
+            {
+                return BadRequest(new { message = result.Message });
+            }
+            return Ok(new { message = result.Message });
+
+        }
+
         //---------------------------------------------------------------------------------------------------------------------------------
 
         // DELETE ENDPOINTS
+
+        // 8- Remove Book
+        [HttpDelete("remove-book/{id}")]
+        public async Task<IActionResult> RemoveBook(int id)
+        {
+            var success = await _adminService.RemoveBook(id);
+            if (!success)
+            {
+                return NotFound(new { message = "Book Not Found" });
+            }
+            return Ok(new { message = "Book removed successfully" });
+        }
     }
 }

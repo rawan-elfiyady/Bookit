@@ -9,12 +9,13 @@ public class AdminService
 {
     private readonly UserRepository _userRepository;
     private readonly BookRepository _bookRepository;
+    private readonly BorrowedBooksRepository _borrowedBookRepository;
 
-    public AdminService(UserRepository userRepository, BookRepository bookRepository)
+    public AdminService(UserRepository userRepository, BookRepository bookRepository, BorrowedBooksRepository borrowedBookRepository)
     {
         _userRepository = userRepository;
         _bookRepository = bookRepository;
-
+        _borrowedBookRepository = borrowedBookRepository;
     }
 
     // ADD LIBRARIAN
@@ -186,6 +187,8 @@ public class AdminService
         return false;
     }
 
+    //-------------------------------------------------------------------------------------------------------------------------------------------
+
     // Books Services 
 
     // Create Book
@@ -210,7 +213,7 @@ public class AdminService
         };
 
         _bookRepository.SaveBook(book);
-        
+
         return new CUBookResponse { Success = false, Message = "Book Already Exist" };
     }
 
@@ -248,7 +251,7 @@ public class AdminService
         {
             existingbook.Category = request.Category;
         }
-        
+
 
         _bookRepository.UpdateBook(existingbook);
         return new CUBookResponse { Success = true, Message = "Book Updated Successfully" };
@@ -258,14 +261,12 @@ public class AdminService
     public async Task<Book?> GetBookByID(int bookId)
     {
         return await _bookRepository.GetBookById(bookId);
-
     }
 
     // Get Book By Name
     public async Task<Book?> GetBookByName(string bookName)
     {
         return await _bookRepository.GetBookByName(bookName);
-
     }
 
     // Get Books By Author
@@ -292,17 +293,7 @@ public class AdminService
         return await _bookRepository.GetAllBooks();
     }
 
-    // Get Borrowed Books 
-    public async Task<List<BorrowedBook>> GetBorrowedBooks()
-    {
-        return await _bookRepository.GetBorrowedBooks();
-    }
 
-    // Get Returned Books 
-    public async Task<List<BorrowedBook>> GetReturnedBooks()
-    {
-        return await _bookRepository.GetReturnedBooks();
-    }
 
     // Delete Book
     public async Task<bool> RemoveBook(int bookId)
@@ -316,6 +307,21 @@ public class AdminService
 
         return false;
     }
+
+    //-------------------------------------------------------------------------------------------------------------------------------------------
+
+    // Borrowed Books Services
     
+    // Get Borrowed Books 
+    public async Task<List<BorrowedBook>> GetBorrowedBooks()
+    {
+        return await _borrowedBookRepository.GetBorrowedBooks();
+    }
+
+    // Get Returned Books 
+    public async Task<List<BorrowedBook>> GetReturnedBooks()
+    {
+        return await _borrowedBookRepository.GetReturnedBooks();
+    }
 
 }

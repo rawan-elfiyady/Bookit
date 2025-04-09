@@ -67,6 +67,7 @@ builder.Services.AddScoped<EmailService>();
 builder.Services.AddScoped<JwtHelper>();
 builder.Services.AddScoped<UserRepository>();
 builder.Services.AddScoped<BookRepository>();
+builder.Services.AddScoped<BorrowedBooksRepository>();
 
 // Add Controllers
 builder.Services.AddControllers();

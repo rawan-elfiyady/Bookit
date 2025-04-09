@@ -25,10 +25,12 @@ public class BorrowedBook
     public string? BookName { get; set; }
 
     [Required]
-    public DateTime BorrowedDate { get; set; }
+    public DateTime BorrowedDate { get; set; } = DateTime.Now;
 
     public DateTime? BorrowDate { get; set; }
     public DateTime? ReturnDate { get; set; }
+
+    public DateTime? DueDate { get; set; }
     public bool IsConfirmed { get; set; } = false;
     public bool IsRequestedToBeReturned { get; set; } = false;
     public bool IsReturned { get; set; } = false;

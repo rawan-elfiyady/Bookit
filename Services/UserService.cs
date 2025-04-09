@@ -8,11 +8,13 @@ public class UserService
 {
     private readonly UserRepository _userRepository;
     private readonly BookRepository _bookRepository;
+    private readonly BorrowedBooksRepository _borrowedBookRepository;
 
-    public UserService(UserRepository userRepository, BookRepository bookRepository)
+    public UserService(UserRepository userRepository, BookRepository bookRepository, BorrowedBooksRepository borrowedBookRepository)
     {
         _userRepository = userRepository;
         _bookRepository = bookRepository;
+        _borrowedBookRepository = borrowedBookRepository;
     }
 
     // VIEW PROFILE
@@ -52,8 +54,10 @@ public class UserService
         return new UpdateDataResponse { Success = true, Message = "Profile Updated Successfully" };
 
     }
+    //-------------------------------------------------------------------------------------------------------------------------------------------
 
     // Book Services
+
     // Get Book By Id
     public async Task<Book?> GetBookByID(int bookId)
     {
@@ -92,9 +96,58 @@ public class UserService
         return await _bookRepository.GetAllBooks();
     }
 
+    //-------------------------------------------------------------------------------------------------------------------------------------------
+
+    // Borrowed Books Services
+
     // Get Borrowed Books
     public async Task<List<BorrowedBook>> GetBorrowedBooks(int userId)
     {
-        return await _bookRepository.GetUserBorrowedBooks(userId);
+        return await _borrowedBookRepository.GetUserBorrowedBooks(userId);
     }
+
+    // Request To Borrow Book
+    public async Task<RequestResponse> RequestBook(int bookId, int userId)
+    {
+        var book = await _bookRepository.GetBookById(bookId);
+
+        if (book == null)
+        {
+            return new RequestResponse { Success = false, Message = "Book Is Not Found" };
+        }
+
+        if (book.AvailabilityStatus == false || book.Quantity == 0)
+        {
+            return new RequestResponse { Success = false, Message = "Book Is Not Available Now" };
+        }
+
+        var requestedBook = new BorrowedBook
+        {
+            UserId = userId,
+            BookId = bookId,
+            BookName = book.Name,
+            BorrowedDate = DateTime.Now
+        };
+
+        _borrowedBookRepository.SaveBook(requestedBook);
+
+        return new RequestResponse { Success = true, Message = "Book Is Requested Successfully" };
+    }
+    // Request To Return Book
+    public async Task<RequestResponse> RequestReturn(int bookId, int userId)
+    {
+        var book = await _borrowedBookRepository.GetBookByUserId(bookId, userId);
+
+        if (book != null)
+        {
+            book.IsRequestedToBeReturned = true;
+            _borrowedBookRepository.UpdateBook(book);
+
+            return new RequestResponse { Success = true, Message = "Return Book Request Sent Successfully" };
+        }
+
+        return new RequestResponse { Success = false, Message = "Book Is Not Found" };
+    }
+
+    
 }
