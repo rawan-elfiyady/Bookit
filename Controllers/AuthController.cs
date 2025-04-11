@@ -44,7 +44,7 @@ namespace Bookit.Controllers
                 return BadRequest(new { message = result.Message });
             }
 
-            return Ok(new { token = result.Token, role = result.Role });
+            return Ok(new { token = result.Token, Id = result.Id, role = result.Role });
         }
 
         [HttpPost("login")]
@@ -61,7 +61,7 @@ namespace Bookit.Controllers
                 return Unauthorized(new { message = result.Message });
             }
 
-            return Ok(new { token = result.Token, role = result.Role });
+            return Ok(new { token = result.Token, Id = result.Id, role = result.Role });
         }
     }
 }

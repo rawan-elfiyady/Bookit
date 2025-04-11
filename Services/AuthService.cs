@@ -44,7 +44,7 @@ public class AuthService
         }
 
         var token = _jwtHelper.GenerateToken(user);
-        return new AuthResponse { Success = true, Token = token, Role = user.Role.ToString() };
+        return new AuthResponse { Success = true, Token = token, Id = user.Id,  Role = user.Role.ToString() };
     }
 
     public async Task<AuthResponse> LoginUser(LoginDto request)
@@ -61,7 +61,7 @@ public class AuthService
         }
 
         var token = _jwtHelper.GenerateToken(user);
-        return new AuthResponse { Success = true, Token = token, Role = user.Role.ToString() };
+        return new AuthResponse { Success = true, Token = token, Id = user.Id,  Role = user.Role.ToString() };
     }
 
 

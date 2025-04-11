@@ -40,13 +40,13 @@ public class UserService
         {
             existingUser.Email = request.Email;
         }
-        if (!string.IsNullOrEmpty(request.Password))
+        if (!string.IsNullOrEmpty(request.Password) && !string.IsNullOrEmpty(request.NewPassword))
         {
             if (!BCrypt.Net.BCrypt.Verify(request.Password, existingUser.Password))
             {
                 return new UpdateDataResponse { Success = false, Message = "Wrong Password" };
             }
-            var hashedPassword = BCrypt.Net.BCrypt.HashPassword(request.Password);
+            var hashedPassword = BCrypt.Net.BCrypt.HashPassword(request.NewPassword);
             existingUser.Password = hashedPassword;
         }
 
