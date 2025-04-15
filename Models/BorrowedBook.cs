@@ -24,6 +24,8 @@ public class BorrowedBook
     [Required]
     public string? BookName { get; set; }
 
+    public string? Image { get; set; }
+
     [Required]
     public DateTime BorrowedDate { get; set; } = DateTime.Now;
 

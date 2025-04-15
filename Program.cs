@@ -82,7 +82,7 @@ if (!app.Environment.IsDevelopment())
 }
 
 // Middleware Order Matters!
-app.UseHttpsRedirection();
+// app.UseHttpsRedirection();
 app.UseRouting();
 
 // Use CORS before Authentication & Authorization

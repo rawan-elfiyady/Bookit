@@ -216,6 +216,15 @@ namespace Bookit.Controllers
             return Ok(new { message = success.Message });
         }
 
+        // 11- Send ALert Email For Due Date
+        [HttpPost("send-due-date-alerts")]
+        public async Task<IActionResult> SendDueDateAlerts()
+        {
+            await _librarianServices.SendDueDateAlertsAsync();
+            return Ok("Due date alert emails sent.");
+        }
+
+
         //---------------------------------------------------------------------------------------------------------------------------------
 
         // PUT ENDPOINTS
@@ -234,11 +243,11 @@ namespace Bookit.Controllers
         }
 
         // 12- Approve Borrowing Request
-        [HttpPut("approve-borrow-request/{bookId}/{userId}")]
-        public async Task<IActionResult> ApproveBorrowRequest(int bookId, int userId)
+        [HttpPut("approve-borrow-request/{borrowedBookId}/{bookId}/{userId}")]
+        public async Task<IActionResult> ApproveBorrowRequest(int borrowedBookId,int bookId, int userId)
         {
             var user = await _librarianServices.GetUser(userId);
-            var success = await _librarianServices.ApproveBorrowBook(bookId, userId);
+            var success = await _librarianServices.ApproveBorrowBook(borrowedBookId, bookId);
 
             if (!success)
             {
@@ -256,11 +265,11 @@ namespace Bookit.Controllers
 
         }
         // 13- Approve Return Request
-        [HttpPut("approve-return-request/{bookId}/{userId}")]
-        public async Task<IActionResult> ApproveReturnRequest(int bookId, int userId)
+        [HttpPut("approve-return-request/{borrowedBookId}/{bookId}/{userId}")]
+        public async Task<IActionResult> ApproveReturnRequest(int borrowedBookId,int bookId, int userId)
         {
             var user = await _librarianServices.GetUser(userId);
-            var success = await _librarianServices.ApproveReturnBook(bookId, userId);
+            var success = await _librarianServices.ApproveReturnBook(borrowedBookId, bookId);
 
             if (!success)
             {
@@ -282,11 +291,11 @@ namespace Bookit.Controllers
         // DELETE ENDPOINTS
 
         // 14- Reject Borrow Request
-        [HttpDelete("reject-borrow-request/{bookId}/{userId}")]
-        public async Task<IActionResult> RejectBorrowRequest(int bookId, int userId, [FromBody] string reason)
+        [HttpDelete("reject-borrow-request/{borrowedBookId}/{userId}")]
+        public async Task<IActionResult> RejectBorrowRequest(int borrowedBookId, int userId, [FromBody] string reason)
         {
             var user = await _librarianServices.GetUser(userId);
-            var success = await _librarianServices.RejectBorrowRequest(bookId, userId);
+            var success = await _librarianServices.RejectBorrowRequest(borrowedBookId);
 
             if (!success)
             {
@@ -304,10 +313,10 @@ namespace Bookit.Controllers
         }
 
         // 15- Remove Book
-        [HttpDelete("remove-book/{id}")]
-        public async Task<IActionResult> RemoveBook(int id)
+        [HttpDelete("remove-book/{bookId}")]
+        public async Task<IActionResult> RemoveBook(int bookId)
         {
-            var success = await _librarianServices.RemoveBook(id);
+            var success = await _librarianServices.RemoveBook(bookId);
             if (!success)
             {
                 return NotFound(new { message = "Book Not Found" });

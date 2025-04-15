@@ -22,6 +22,17 @@ public class BorrowedBooksRepository
         await _context.SaveChangesAsync();
     }
 
+    // Get Alerted Book
+    public async Task<List<BorrowedBook?>> GetAlertedBook(DateTime targetDate)
+    {
+        var borrowedBooks = await _context.BorrowedBooks
+                            .Include(bb => bb.User)
+                            .Include(bb => bb.Book)
+                            .Where(bb => bb.DueDate.Date == targetDate && !bb.IsReturned)
+                            .ToListAsync();
+        return borrowedBooks;
+    }
+
     // Get Book By ID
     public async Task<BorrowedBook?> GetBookById(int bookId)
     {
@@ -81,11 +92,9 @@ public class BorrowedBooksRepository
         await _context.SaveChangesAsync();
     }
     // Delete Borrowed Book
-    public async Task<bool> DeleteBorrowedBook(int bookId, int userId)
+    public async Task<bool> DeleteBorrowedBook(int borrowedBookId)
     {
-        var book = await _context.BorrowedBooks
-                            .Where(b => b.BookId == bookId
-                            && b.UserId == userId).FirstOrDefaultAsync();
+        var book = await _context.BorrowedBooks.FindAsync(borrowedBookId);
 
         if (book != null)
         {
@@ -99,11 +108,9 @@ public class BorrowedBooksRepository
     }
 
     // Approve Borrow Request
-    public async Task<bool> ApproveBorrowRequest(int bookId, int userId)
+    public async Task<bool> ApproveBorrowRequest(int borrowedBookId)
     {
-        var book = await _context.BorrowedBooks
-                            .Where(b => b.BookId == bookId
-                            && b.UserId == userId).FirstOrDefaultAsync();
+        var book = await _context.BorrowedBooks.FindAsync(borrowedBookId);
 
         if (book != null)
         {
@@ -119,11 +126,9 @@ public class BorrowedBooksRepository
         return false;
     }
     // Approve Return Request
-    public async Task<bool> ApproveReturnRequest(int bookId, int userId)
+    public async Task<bool> ApproveReturnRequest(int borrowedBookId)
     {
-        var book = await _context.BorrowedBooks
-                            .Where(b => b.BookId == bookId
-                            && b.UserId == userId).FirstOrDefaultAsync();
+        var book = await _context.BorrowedBooks.FindAsync(borrowedBookId);
 
         if (book != null)
         {

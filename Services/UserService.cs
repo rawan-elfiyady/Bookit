@@ -126,7 +126,8 @@ public class UserService
             UserId = userId,
             BookId = bookId,
             BookName = book.Name,
-            BorrowedDate = DateTime.Now
+            BorrowedDate = DateTime.Now,
+            Image = book.Image
         };
 
         await _borrowedBookRepository.SaveBook(requestedBook);
@@ -134,9 +135,9 @@ public class UserService
         return new RequestResponse { Success = true, Message = "Book Is Requested Successfully" };
     }
     // Request To Return Book
-    public async Task<RequestResponse> RequestReturn(int bookId, int userId)
+    public async Task<RequestResponse> RequestReturn(int borrowedBookId)
     {
-        var book = await _borrowedBookRepository.GetBookByUserId(bookId, userId);
+        var book = await _borrowedBookRepository.GetBookById(borrowedBookId);
 
         if (book != null)
         {
@@ -147,6 +148,35 @@ public class UserService
         }
 
         return new RequestResponse { Success = false, Message = "Book Is Not Found" };
+    }
+    // Cancel Request To Return Book
+    public async Task<RequestResponse> CancelReturnRequest(int borrowedBookId)
+    {
+        var book = await _borrowedBookRepository.GetBookById(borrowedBookId);
+
+        if (book != null)
+        {
+            book.IsRequestedToBeReturned = false;
+            await _borrowedBookRepository.UpdateBook(book);
+
+            return new RequestResponse { Success = true, Message = "Return Book Request Canceled Successfully!" };
+        }
+
+        return new RequestResponse { Success = false, Message = "Book Is Not Found" };
+    }
+
+    // Cancel Borrow Request
+    public async Task<RequestResponse> CancelBorrowRequest(int borrowedBookId)
+    {
+        var book = await _borrowedBookRepository.GetBookById(borrowedBookId);
+
+        if (book != null && !book.IsConfirmed)
+        {
+            await _borrowedBookRepository.DeleteBorrowedBook(borrowedBookId);
+            return new RequestResponse { Success = true, Message = "Borrowing Book Request Canceled Successfully!" };
+        }
+
+        return new RequestResponse { Success = false, Message = "Borrowing Book Request Already Accepted." };
     }
 
     

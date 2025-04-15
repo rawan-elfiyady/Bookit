@@ -59,6 +59,7 @@ namespace Bookit.Controllers
         // BOOK MANAGEMENT
 
         // GET ENDPOINTS
+
         // 1- Get Book By Name
         [HttpGet("book-by-name/{name}")]
         public async Task<IActionResult> FilterBookByName(string name)
@@ -154,16 +155,44 @@ namespace Bookit.Controllers
         }
 
         // 7- Send a Return Request
-        [HttpPost("request-return-book/{bookId}/{userId}")]
-        public async Task<IActionResult> RequestReturn(int bookId, int userId)
+        [HttpPost("request-return-book/{borrowedBookId}")]
+        public async Task<IActionResult> RequestReturn(int borrowedBookId)
         {
-            var result = await _userServices.RequestReturn(bookId, userId);
+            var result = await _userServices.RequestReturn(borrowedBookId);
 
             if (!result.Success)
             {
                 return BadRequest(new { message = result.Message });
             }
 
+            return Ok(new { message = result.Message });
+        }
+
+        //----------------------------------------------------------------------------------------------------------------------------------
+
+        // 8- Cancel Borrowing Request
+        [HttpDelete("cancel-borrowing-request/{borrowedBookId}")]
+        public async Task<IActionResult> CancelBorrowRequest(int borrowedBookId)
+        {
+            var result = await _userServices.CancelBorrowRequest(borrowedBookId);
+
+            if (!result.Success)
+            {
+                return BadRequest(new { message = result.Message });
+            }
+            return Ok(new { message = result.Message });
+        }
+
+        // 9- Cancel Return Request
+        [HttpDelete("cancel-return-request/{borrowedBookId}")]
+        public async Task<IActionResult> CancelReturnRequest(int borrowedBookId)
+        {
+            var result = await _userServices.CancelReturnRequest(borrowedBookId);
+
+            if (!result.Success)
+            {
+                return BadRequest(new { message = result.Message });
+            }
             return Ok(new { message = result.Message });
         }
 

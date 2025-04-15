@@ -9,12 +9,16 @@ public class LibrarianServices
     private readonly UserRepository _userRepository;
     private readonly BookRepository _bookRepository;
     private readonly BorrowedBooksRepository _borrowedBookRepository;
+    private readonly EmailService _emailService;
 
-    public LibrarianServices(UserRepository userRepository, BookRepository bookRepository, BorrowedBooksRepository borrowedBookRepository)
+
+    public LibrarianServices(UserRepository userRepository, BookRepository bookRepository, BorrowedBooksRepository borrowedBookRepository, EmailService emailService)
     {
         _userRepository = userRepository;
         _bookRepository = bookRepository;
         _borrowedBookRepository = borrowedBookRepository;
+        _emailService = emailService;
+
     }
 
     // GET USERS
@@ -176,6 +180,19 @@ public class LibrarianServices
         return await _bookRepository.GetAllBooks();
     }
 
+    // Delete Book
+    public async Task<bool> RemoveBook(int bookId)
+    {
+        var existingBook = await _bookRepository.GetBookById(bookId);
+
+        if (existingBook != null)
+        {
+            return await _bookRepository.deleteBook(bookId);
+        }
+
+        return false;
+    }
+
     //-------------------------------------------------------------------------------------------------------------------------------------------
 
     // Borrowed Books Services
@@ -192,27 +209,14 @@ public class LibrarianServices
         return await _borrowedBookRepository.GetReturnedBooks();
     }
 
-    // Delete Book
-    public async Task<bool> RemoveBook(int bookId)
-    {
-        var existingBook = await _bookRepository.GetBookById(bookId);
-
-        if (existingBook != null)
-        {
-            return await _bookRepository.deleteBook(bookId);
-        }
-
-        return false;
-    }
-
     // Reject Borrow Request
-    public async Task<bool> RejectBorrowRequest(int bookId, int userId)
+    public async Task<bool> RejectBorrowRequest(int borrowedBookId)
     {
-        var book = await _borrowedBookRepository.GetBookByUserId(bookId, userId);
+        var book = await _borrowedBookRepository.GetBookById(borrowedBookId);
 
         if (book != null)
         {
-            return await _borrowedBookRepository.DeleteBorrowedBook(bookId, userId);
+            return await _borrowedBookRepository.DeleteBorrowedBook(borrowedBookId);
         }
         return false;
     }
@@ -230,9 +234,9 @@ public class LibrarianServices
     }
 
     // APPROVE Borrow REQUEST
-    public async Task<bool> ApproveBorrowBook(int bookId, int userId)
+    public async Task<bool> ApproveBorrowBook(int borrowedBookId, int bookId)
     {
-        var book = await _borrowedBookRepository.GetBookByUserId(bookId, userId);
+        var book = await _borrowedBookRepository.GetBookById(borrowedBookId);
 
         if (book != null)
         {
@@ -243,17 +247,17 @@ public class LibrarianServices
                 borrowedBook.AvailabilityStatus = false;
             }
             await _bookRepository.UpdateBook(borrowedBook);
-            
-            return await _borrowedBookRepository.ApproveBorrowRequest(bookId, userId);
+
+            return await _borrowedBookRepository.ApproveBorrowRequest(borrowedBookId);
         }
 
         return false;
     }
 
     // APPROVE Return REQUEST
-    public async Task<bool> ApproveReturnBook(int bookId, int userId)
+    public async Task<bool> ApproveReturnBook(int borrowedBookId, int bookId)
     {
-        var book = await _borrowedBookRepository.GetBookByUserId(bookId, userId);
+        var book = await _borrowedBookRepository.GetBookById(borrowedBookId);
 
         if (book != null)
         {
@@ -268,10 +272,30 @@ public class LibrarianServices
             book.ReturnDate = DateTime.Now;
             await _borrowedBookRepository.UpdateBook(book);
 
-            return await _borrowedBookRepository.ApproveReturnRequest(bookId, userId);
+            return await _borrowedBookRepository.ApproveReturnRequest(borrowedBookId);
         }
 
         return false;
     }
+    
+    public async Task SendDueDateAlertsAsync()
+    {
+        var targetDate = DateTime.UtcNow.Date.AddDays(8); // Alert for 3 days before due
+
+        var borrowedBooks = await _borrowedBookRepository.GetAlertedBook(targetDate);
+
+        foreach (var borrowed in borrowedBooks)
+            {
+                var email = borrowed.User.Email;
+                var subject = "Book Due Reminder";
+                var body = $"Dear {borrowed.User.Name},\n\n" +
+                        $"Your borrowed book \"{borrowed.Book.Name}\" is due on {borrowed.DueDate:yyyy-MM-dd}.\n" +
+                        $"Please return it on time to avoid a penalty.\n\n" +
+                        $"Thank you,\nBookit System";
+
+                await _emailService.SendEmailAsync(email, subject, body);
+            }
+    }
+
 
 }
