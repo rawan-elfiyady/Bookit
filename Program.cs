@@ -7,6 +7,7 @@ using Bookit.Services;
 using Bookit.Helpers;
 using Bookit.Repositories;
 using Bookit.Service;
+using Bookit.Hubs;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -74,6 +75,8 @@ builder.Services.AddControllers();
 
 var app = builder.Build();
 
+builder.Services.AddSignalR();
+
 // Configure Middleware
 if (!app.Environment.IsDevelopment())
 {
@@ -98,4 +101,5 @@ app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
 
+app.MapHub<ChatHub>("/Chat");
 app.Run();

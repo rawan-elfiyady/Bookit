@@ -16,6 +16,10 @@ public class BorrowedBook
     public User? User { get; set; }
 
     [Required]
+    public string Username { get; set; }
+
+
+    [Required]
     public int BookId { get; set; }
 
     [ForeignKey("BookId")]
