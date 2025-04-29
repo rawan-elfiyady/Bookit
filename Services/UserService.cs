@@ -110,6 +110,7 @@ public class UserService
     public async Task<RequestResponse> RequestBook(int bookId, int userId)
     {
         var book = await _bookRepository.GetBookById(bookId);
+        var user = await _userRepository.GetUserById(userId);
 
         if (book == null)
         {
@@ -125,6 +126,7 @@ public class UserService
         {
             UserId = userId,
             BookId = bookId,
+            Username = user.Name,
             BookName = book.Name,
             BorrowedDate = DateTime.Now,
             Image = book.Image
