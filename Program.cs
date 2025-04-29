@@ -2,6 +2,7 @@ using System.Text;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.AspNetCore.SignalR;
 using Bookit.Data;
 using Bookit.Services;
 using Bookit.Helpers;
@@ -54,6 +55,8 @@ builder.Services.AddCors(options =>
                 .AllowCredentials(); // Important for JWT authentication
         });
 });
+builder.Services.AddSingleton<IUserIdProvider, CustomUserIdProvider>();
+
 
 // Register Authorization
 builder.Services.AddAuthorization();
@@ -101,5 +104,5 @@ app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
 
-app.MapHub<ChatHub>("/Chat");
+app.MapHub<ChatHub>("/ChatHub");
 app.Run();

@@ -13,6 +13,8 @@ public class LibraryDbContext : DbContext
     public DbSet<User> Users { get; set; }
     public DbSet<Book> Books { get; set; }
     public DbSet<BorrowedBook> BorrowedBooks { get; set; }
+    public DbSet<ChatMessage> ChatMessages { get; set; }
+
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
