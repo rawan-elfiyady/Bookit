@@ -85,10 +85,6 @@ public class AdminService
             existingLibrarian.Password = hashedPassword;
         }
 
-        if (request.IsApproved != null)
-        {
-            existingLibrarian.IsApproved = request.IsApproved;
-        }
         await _userRepository.UpdateUser(existingLibrarian);
         return new UpdateDataResponse { Success = true, Message = "Librarian Updated Successfully" };
 
@@ -311,7 +307,7 @@ public class AdminService
     //-------------------------------------------------------------------------------------------------------------------------------------------
 
     // Borrowed Books Services
-    
+
     // Get Borrowed Books 
     public async Task<List<BorrowedBook>> GetBorrowedBooks()
     {

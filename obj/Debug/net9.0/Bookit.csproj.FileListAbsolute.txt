@@ -211,13 +211,6 @@ D:\Desktop 3\Rawan\Bookit\obj\Debug\net9.0\refint\Bookit.dll
 D:\Desktop 3\Rawan\Bookit\obj\Debug\net9.0\Bookit.pdb
 D:\Desktop 3\Rawan\Bookit\obj\Debug\net9.0\Bookit.genruntimeconfig.cache
 D:\Desktop 3\Rawan\Bookit\obj\Debug\net9.0\ref\Bookit.dll
-D:\Desktop 3\Rawan\Bookit\bin\Debug\net9.0\Microsoft.AspNet.SignalR.Core.dll
-D:\Desktop 3\Rawan\Bookit\bin\Debug\net9.0\Microsoft.AspNet.SignalR.SystemWeb.dll
-D:\Desktop 3\Rawan\Bookit\bin\Debug\net9.0\Microsoft.Owin.dll
-D:\Desktop 3\Rawan\Bookit\bin\Debug\net9.0\Microsoft.Owin.Host.SystemWeb.dll
-D:\Desktop 3\Rawan\Bookit\bin\Debug\net9.0\Microsoft.Owin.Security.dll
-D:\Desktop 3\Rawan\Bookit\bin\Debug\net9.0\Owin.dll
-D:\Desktop 3\Rawan\Bookit\bin\Debug\net9.0\System.Net.WebSockets.WebSocketProtocol.dll
 D:\Desktop 3\Rawan\Bookit\bin\Debug\net9.0\Castle.Core.dll
 D:\Desktop 3\Rawan\Bookit\bin\Debug\net9.0\Microsoft.AspNetCore.Connections.Abstractions.dll
 D:\Desktop 3\Rawan\Bookit\bin\Debug\net9.0\Microsoft.AspNetCore.Http.Connections.Client.dll

@@ -75,10 +75,10 @@ builder.Services.AddScoped<BorrowedBooksRepository>();
 
 // Add Controllers
 builder.Services.AddControllers();
+builder.Services.AddSignalR();
 
 var app = builder.Build();
 
-builder.Services.AddSignalR();
 
 // Configure Middleware
 if (!app.Environment.IsDevelopment())

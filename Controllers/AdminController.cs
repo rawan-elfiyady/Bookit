@@ -161,9 +161,9 @@ namespace Bookit.Controllers
 
         // 9-  Reject Librarian Request
         [HttpDelete("reject-librarian/{id}")]
-        public async Task<IActionResult> RejectLibrarian(int librarianId, [FromBody] string reason)
+        public async Task<IActionResult> RejectLibrarian(int id)
         {
-            var librarian = await _adminService.GetLibrarian(librarianId);
+            var librarian = await _adminService.GetLibrarian(id);
 
             if (librarian == null || librarian.Role != "Librarian")
             {
@@ -174,11 +174,11 @@ namespace Bookit.Controllers
             await _emailService.SendEmailAsync(
                 librarian.Email,
                 "Librarian Registration Rejected",
-                $"Dear {librarian.Name},\n\nWe regret to inform you that your registration request has been rejected.\n\nReason: {reason}\n\nIf you have any questions, contact support."
+                $"Dear {librarian.Name},\n\nWe regret to inform you that your registration request has been rejected.\n\n\n\nIf you have any questions, contact support."
             );
 
             // Optionally, delete the librarian record
-            await _adminService.RejectLibrarian(librarianId);
+            await _adminService.RejectLibrarian(id);
 
             return Ok(new { message = "Librarian registration rejected and email sent." });
         }
