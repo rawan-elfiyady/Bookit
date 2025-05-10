@@ -49,7 +49,9 @@ public class BorrowedBooksRepository
     // Get All Borrowed Books
     public async Task<List<BorrowedBook>> GetBorrowedBooks()
     {
-        return await _context.BorrowedBooks.ToListAsync();
+        return await _context.BorrowedBooks
+        .Where(b => b.IsConfirmed == true)
+        .ToListAsync();
     }
 
     // Get Pending Return Requests
