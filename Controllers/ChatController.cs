@@ -1,3 +1,10 @@
+using Microsoft.AspNetCore.Mvc;       // For ApiController, ControllerBase, Route, HttpGet
+using System.Linq;                    // For LINQ queries
+using System.Threading.Tasks;        // For async/await
+using Bookit.Data;                   // For LibraryDbContext
+using System.Security.Claims;
+using Microsoft.EntityFrameworkCore;
+
 [ApiController]
 [Route("api/chat")]
 public class ChatController : ControllerBase

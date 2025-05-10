@@ -45,6 +45,25 @@ namespace Bookit.Controllers
             return Ok(new { message = "Librarian Created Successfully" });
 
         }
+        // 1- Create Admin
+        [HttpPost("add-admin")]
+        public async Task<IActionResult> AddAdmin([FromBody] CreateUserDto request)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(new { message = "Validation failed.", errors = ModelState });
+            }
+
+            var success = await _adminService.AddLibrarian(request);
+
+            if (!success)
+            {
+                return BadRequest(new { message = "Admin Already Exist" });
+            }
+
+            return Ok(new { message = "Admin Created Successfully" });
+
+        }
 
         //---------------------------------------------------------------------------------
 
@@ -320,5 +339,38 @@ namespace Bookit.Controllers
             }
             return Ok(new { message = "Book removed successfully" });
         }
+
+        //-------------------------------------------------------------------------------------------------------------------------------------------
+
+        // Borrowed Books Services
+
+        // GET ENDPOINTS
+
+        [HttpGet("BorrowedBooks")]
+        public async Task<IActionResult> GetBorrwedBooks()
+        {
+            var books = await _adminService.GetBorrowedBooks();
+
+            if (books == null)
+            {
+                return NotFound(new { message = "Borrowed Books Not Found" });
+            }
+            return Ok(books);
+
+        }
+
+        [HttpGet("Returned-Books")]
+        public async Task<IActionResult> GetReturnedBooks()
+        {
+            var books = await _adminService.GetReturnedBooks();
+
+            if (books == null)
+            {
+                return NotFound(new { message = "Returned Books Not Found" });
+            }
+            return Ok(books);
+
+        }
+
     }
 }

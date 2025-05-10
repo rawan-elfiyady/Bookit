@@ -18,6 +18,33 @@ public class AdminService
         _borrowedBookRepository = borrowedBookRepository;
     }
 
+    // ADD Admin
+    public async Task<bool> AddAdmin(CreateUserDto request)
+    {
+        var existingAdmin = await _userRepository.GetUserByEmail(request.Email);
+
+        if (existingAdmin != null)
+        {
+            return false;
+        }
+
+        var hashedPassword = BCrypt.Net.BCrypt.HashPassword(request.Password);
+
+        var admin = new User
+        {
+            Name = request.Name,
+            Email = request.Email,
+            Password = hashedPassword,
+            Role = "Admin",
+            IsApproved = true,
+        };
+
+        await _userRepository.SaveUser(admin);
+
+        return true;
+    }
+
+
     // ADD LIBRARIAN
     public async Task<bool> AddLibrarian(CreateUserDto request)
     {

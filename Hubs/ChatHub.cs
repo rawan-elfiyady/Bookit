@@ -1,5 +1,7 @@
 using Microsoft.AspNetCore.SignalR;
 using System.Threading.Tasks;
+using System.Security.Claims;
+
 using Bookit.Data;
 using Bookit.Models;
 
@@ -14,9 +16,10 @@ public class ChatHub : Hub
         _dbContext = dbContext;
     }
 
-    public async Task SendPrivateMessage(string receiverId, string message)
+    public async Task SendPrivateMessage(int senderId, int receiverId, string message)
     {
-        var senderId = Context.UserIdentifier;
+        // var senderId = Context.UserIdentifier;
+
 
         var sender = await _dbContext.Users.FindAsync(senderId);
         var receiver = await _dbContext.Users.FindAsync(receiverId);
@@ -26,20 +29,32 @@ public class ChatHub : Hub
             throw new HubException("Sender or receiver not found.");
         }
 
+        // Convert int to string
+        string senderIdString = senderId.ToString();
+        string receiverIdString = receiverId.ToString();
+
         var chatMessage = new ChatMessage
         {
-            SenderId = senderId,
+            SenderId = senderIdString,
             SenderName = sender.Name,
-            ReceiverId = receiverId,
+            ReceiverId = receiverIdString,
             ReceiverName = receiver.Name,
             MessageText = message,
             SentAt = DateTimeOffset.UtcNow
         };
 
-        _dbContext.ChatMessages.Add(chatMessage);
-        await _dbContext.SaveChangesAsync();
+        try
+        {
+            _dbContext.ChatMessages.Add(chatMessage);
+            await _dbContext.SaveChangesAsync();
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Database Error: {ex.Message}");
+            throw;
+        }
 
-        await Clients.User(receiverId).SendAsync("ReceiveMessage", senderId, sender.Name, message, chatMessage.SentAt);
-        await Clients.User(senderId).SendAsync("ReceiveMessage", receiverId, receiver.Name, message, chatMessage.SentAt);
+        await Clients.User(receiverIdString).SendAsync("ReceiveMessage", senderId, sender.Name, message, chatMessage.SentAt);
+        await Clients.User(senderIdString).SendAsync("ReceiveMessage", receiverId, receiver.Name, message, chatMessage.SentAt);
     }
 }
