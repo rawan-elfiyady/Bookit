@@ -1,27 +1,22 @@
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using System.Linq;
-using System.Threading.Tasks;
-using Bookit.Models;       // Replace with your actual namespace
-using Bookit.Data;         // Replace with the namespace of your DbContext
-
-[Route("api/[controller]")]
 [ApiController]
+[Route("api/chat")]
 public class ChatController : ControllerBase
 {
-    private readonly LibraryDbContext _db;
-    public ChatController(LibraryDbContext db)
+    private readonly LibraryDbContext _dbContext;
+
+    public ChatController(LibraryDbContext dbContext)
     {
-        _db = db;
+        _dbContext = dbContext;
     }
 
-    [HttpGet("history")]
-    public async Task<IActionResult> GetChatHistory(string user1Id, string user2Id)
+    [HttpGet("history/{userId}")]
+    public async Task<IActionResult> GetChatHistory(string userId)
     {
-        var messages = await _db.ChatMessages
-            .Where(m => 
-                (m.SenderId == user1Id && m.ReceiverId == user2Id) ||
-                (m.SenderId == user2Id && m.ReceiverId == user1Id))
+        var currentUserId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+        var messages = await _dbContext.ChatMessages
+            .Where(m => (m.SenderId == currentUserId && m.ReceiverId == userId) ||
+                        (m.SenderId == userId && m.ReceiverId == currentUserId))
             .OrderBy(m => m.SentAt)
             .ToListAsync();
 
