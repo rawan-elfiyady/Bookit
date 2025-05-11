@@ -54,6 +54,13 @@ public class UserService
         return new UpdateDataResponse { Success = true, Message = "Profile Updated Successfully" };
 
     }
+
+    // Get libraians 
+    public async Task<List<User>> GetLibrarians()
+    {
+        return await _userRepository.GetLibrarians();
+    }
+
     //-------------------------------------------------------------------------------------------------------------------------------------------
 
     // Book Services

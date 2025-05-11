@@ -54,7 +54,7 @@ namespace Bookit.Controllers
                 return BadRequest(new { message = "Validation failed.", errors = ModelState });
             }
 
-            var success = await _adminService.AddLibrarian(request);
+            var success = await _adminService.AddAdmin(request);
 
             if (!success)
             {

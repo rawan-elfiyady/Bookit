@@ -6,7 +6,7 @@ using System.Security.Claims;
 using Microsoft.EntityFrameworkCore;
 
 [ApiController]
-[Route("api/chat")]
+[Route("chat")]
 public class ChatController : ControllerBase
 {
     private readonly LibraryDbContext _dbContext;
@@ -16,14 +16,12 @@ public class ChatController : ControllerBase
         _dbContext = dbContext;
     }
 
-    [HttpGet("history/{userId}")]
-    public async Task<IActionResult> GetChatHistory(string userId)
+    [HttpGet("history/{senderId}{receiverId}")]
+    public async Task<IActionResult> GetChatHistory(int senderId, int receiverId)
     {
-        var currentUserId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-
         var messages = await _dbContext.ChatMessages
-            .Where(m => (m.SenderId == currentUserId && m.ReceiverId == userId) ||
-                        (m.SenderId == userId && m.ReceiverId == currentUserId))
+            .Where(m => (m.SenderId == senderId && m.ReceiverId == receiverId) ||
+                        (m.SenderId == receiverId && m.ReceiverId == senderId))
             .OrderBy(m => m.SentAt)
             .ToListAsync();
 

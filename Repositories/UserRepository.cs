@@ -82,15 +82,16 @@ public class UserRepository
     public async Task<List<User>> GetLibrarians()
     {
         return await _context.Users
-                    .Where(l => l.Role.Equals("Librarian"))
+                    .Where(l => l.Role.Equals("Librarian") && l.IsApproved == true)
                     .ToListAsync();
     }
     public async Task<List<User>> GetUsers()
     {
         return await _context.Users
-                    .Where(l => l.Role.Equals("User"))
+                    .Where(l => l.Role.Equals("User") )
                     .ToListAsync();
     }
+    
 
 
 }

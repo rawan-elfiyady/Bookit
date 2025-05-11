@@ -36,11 +36,25 @@ namespace Bookit.Controllers
             return Ok(user);
         }
 
+        // 2- Get Librarians
+        [HttpGet("get-librarians")]
+        public async Task<IActionResult> GetLibrarians()
+        {
+            var librarians = await _userServices.GetLibrarians();
+
+            if (librarians == null)
+            {
+                return BadRequest(new { message = "There Is No Librarians" });
+            }
+
+            return Ok(librarians);
+        }
+
         // --------------------------------------------------------------------------------------------------
 
         // PUT ENDPOINTS
 
-        // 2-  Update Profile
+        // 3-  Update Profile
         [HttpPut("update-profile/{id}")]
         public async Task<IActionResult> UpdateProfile(int id, UpdateProfileDto request)
         {
